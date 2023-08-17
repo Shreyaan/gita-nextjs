@@ -13,7 +13,7 @@ export function Shloka({
   dataArr: Data[];
   setData: React.Dispatch<React.SetStateAction<Data[]>>;
 }) {
-  const refreshedShloka = useRef({} as Data)
+  const refreshedShloka = useRef({} as Data);
   const ref = useRef<HTMLDivElement | null>(null);
   const ran = useRef(false);
   const entry = useIntersectionObserver(ref, {});
@@ -41,7 +41,7 @@ export function Shloka({
 
     const fetchDataWithRetry = async () => {
       if (retryCount < 5) {
-        if (!Shlokadata.englishCommentary && !refreshedShloka.current.englishText) {
+        if (!refreshedShloka.current.englishText) {
           if (retryCount > 1) {
             //sleep for 500ms
             await new Promise((r) => setTimeout(r, 500));
@@ -102,7 +102,7 @@ export function Shloka({
     setData,
   ]);
 
-  if (!Shlokadata.englishCommentary && !refreshedShloka.current.englishText) {
+  if ( !refreshedShloka.current.englishText) {
     return (
       <div className="w-11/12 lg:w-3/4 ">
         <div className="border p-4 pt-7 m-4 border-gray-500">
@@ -115,13 +115,11 @@ export function Shloka({
     <div ref={ref} className="w-11/12 lg:w-3/4 ">
       {Shlokadata && (
         <div className="border p-4 pt-7 m-4 border-gray-500">
-          <p>{Shlokadata.englishText || refreshedShloka.current.englishText}</p>
+          <p>{refreshedShloka.current.englishText}</p>
 
           <br />
 
-          <p>
-            {Shlokadata.englishCommentary || refreshedShloka.current.englishCommentary}
-          </p>
+          <p>{refreshedShloka.current.englishCommentary}</p>
           <br />
         </div>
       )}
