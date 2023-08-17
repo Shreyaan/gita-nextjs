@@ -1,7 +1,7 @@
 interface Data {
-  hindiText: string;
-  englishText: string;
-  englishCommentary: string;
+  hindiText?: string;
+  englishText?: string;
+  englishCommentary?: string;
   shlokaNumber: number;
   chapterNumber: number;
 }
