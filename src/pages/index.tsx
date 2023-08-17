@@ -13,7 +13,7 @@ const IndexPage = () => {
     firstFiveLoop().then(() => {
       setData(firstfive);
     });
-    console.log(firstfive);
+
 
     async function firstFiveLoop() {
       for (let i = 1; i <= 1; i++) {

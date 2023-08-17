@@ -13,7 +13,7 @@ export function Shloka({
   dataArr: Data[];
   setData: React.Dispatch<React.SetStateAction<Data[]>>;
 }) {
-  const [refreshedShloka, setRefreshedShloka] = useState<Data>({} as Data)
+  const [refreshedShloka, setRefreshedShloka] = useState<Data>({} as Data);
   const ref = useRef<HTMLDivElement | null>(null);
   const ran = useRef(false);
   const entry = useIntersectionObserver(ref, {});
@@ -24,48 +24,53 @@ export function Shloka({
   const handleVisibilityChange = (isVisible: boolean) => {
     if (!wasVisible && isVisible) {
       setWasVisible(true);
-      console.log(
-        "visible" +
-        "  " +
-        Shlokadata.chapterNumber +
-        "  " +
-        Shlokadata.shlokaNumber
-      );
     }
   };
-
+  let data = refreshedShloka;
   handleVisibilityChange(isVisible);
 
   useEffect(() => {
     let retryCount = 0;
 
     const fetchDataWithRetry = async () => {
-      if (retryCount < 5) {
-        if (!refreshedShloka.englishText) {
+      if (retryCount < 2) {
+        if (!data.englishText && !data.englishCommentary) {
           if (retryCount > 1) {
             //sleep for 500ms
-            await new Promise((r) => setTimeout(r, 500));
+            await new Promise((r) => setTimeout(r, 1000));
           }
+
           try {
+            console.log(
+              "Fetching data" +
+                Shlokadata.chapterNumber +
+                " " +
+                Shlokadata.shlokaNumber +
+                " " +
+                retryCount +
+                " " +
+                refreshedShloka.englishText +
+                " " +
+                refreshedShloka.englishCommentary
+            );
+
             const res = await fetchData(
               Shlokadata.chapterNumber,
               Shlokadata.shlokaNumber
             );
-            let data:Data ={
+            let data: Data = {
               chapterNumber: Shlokadata.chapterNumber,
               shlokaNumber: Shlokadata.shlokaNumber,
-              englishCommentary :res.englishCommentary,
+              englishCommentary: res.englishCommentary,
               englishText: res.englishText,
-              hindiText: res.hindiText
-
-            }
-           setRefreshedShloka(data)
-            console.log(res);
+              hindiText: res.hindiText,
+            };
+            setRefreshedShloka(data);
           } catch (e) {
             console.log(e);
           } finally {
             retryCount++;
-            setTimeout(fetchDataWithRetry, 500); // Retry after a delay of 500ms
+            setTimeout(fetchDataWithRetry, 1000); // Retry after a delay of 500ms
           }
         }
       }
@@ -76,7 +81,9 @@ export function Shloka({
     Shlokadata.chapterNumber,
     Shlokadata.englishCommentary,
     Shlokadata.shlokaNumber,
-    refreshedShloka.englishText,
+    data.englishCommentary,
+    data.englishText,
+    refreshedShloka,
   ]);
 
   useEffect(() => {
@@ -114,7 +121,29 @@ export function Shloka({
     return (
       <div className="w-11/12 lg:w-3/4 ">
         <div className="border p-4 pt-7 m-4 border-gray-800 text-white">
-          <p>Loading...</p>
+          <p>
+            Loading...
+            <button
+              className="ml-4 bg-gray-800 text-white px-2 py-1 rounded"
+              onClick={() => {
+                fetchData(
+                  Shlokadata.chapterNumber,
+                  Shlokadata.shlokaNumber
+                ).then((res) => {
+                  let data: Data = {
+                    chapterNumber: Shlokadata.chapterNumber,
+                    shlokaNumber: Shlokadata.shlokaNumber,
+                    englishCommentary: res.englishCommentary,
+                    englishText: res.englishText,
+                    hindiText: res.hindiText,
+                  };
+                  setRefreshedShloka(data);
+                });
+              }}
+            >
+              Reload
+            </button>
+          </p>
         </div>
       </div>
     );
