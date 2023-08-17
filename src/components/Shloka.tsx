@@ -13,7 +13,10 @@ export function Shloka({
   dataArr: Data[];
   setData: React.Dispatch<React.SetStateAction<Data[]>>;
 }) {
-  const refreshedShloka = useRef({} as Data);
+  const [refreshedShloka, setRefreshedShloka] = useState<Data>({} as Data)
+  useEffectOnce(() => {
+    setRefreshedShloka(Shlokadata)
+  })
   const ref = useRef<HTMLDivElement | null>(null);
   const ran = useRef(false);
   const entry = useIntersectionObserver(ref, {});
@@ -26,10 +29,10 @@ export function Shloka({
       setWasVisible(true);
       console.log(
         "visible" +
-          "  " +
-          Shlokadata.chapterNumber +
-          "  " +
-          Shlokadata.shlokaNumber
+        "  " +
+        Shlokadata.chapterNumber +
+        "  " +
+        Shlokadata.shlokaNumber
       );
     }
   };
@@ -41,7 +44,7 @@ export function Shloka({
 
     const fetchDataWithRetry = async () => {
       if (retryCount < 5) {
-        if (!refreshedShloka.current.englishText) {
+        if (!refreshedShloka.englishText) {
           if (retryCount > 1) {
             //sleep for 500ms
             await new Promise((r) => setTimeout(r, 500));
@@ -51,7 +54,7 @@ export function Shloka({
               Shlokadata.chapterNumber,
               Shlokadata.shlokaNumber
             );
-            refreshedShloka.current = res;
+           setRefreshedShloka(ref as unknown as Data)
             console.log(res);
           } catch (e) {
             console.log(e);
@@ -68,7 +71,7 @@ export function Shloka({
     Shlokadata.chapterNumber,
     Shlokadata.englishCommentary,
     Shlokadata.shlokaNumber,
-    refreshedShloka.current.englishText,
+    refreshedShloka.englishText,
   ]);
 
   useEffect(() => {
@@ -86,7 +89,7 @@ export function Shloka({
           chapterNumber: nextChapter,
           shlokaNumber: nextIndex,
         } as Data;
-        setData((prev) => {
+        setData((prev: any) => {
           return [...prev, data];
         });
       }
@@ -102,7 +105,7 @@ export function Shloka({
     setData,
   ]);
 
-  if ( !refreshedShloka.current.englishText) {
+  if (!refreshedShloka.englishText) {
     return (
       <div className="w-11/12 lg:w-3/4 ">
         <div className="border p-4 pt-7 m-4 border-gray-500">
@@ -115,11 +118,11 @@ export function Shloka({
     <div ref={ref} className="w-11/12 lg:w-3/4 ">
       {Shlokadata && (
         <div className="border p-4 pt-7 m-4 border-gray-500">
-          <p>{refreshedShloka.current.englishText}</p>
+          <p>{refreshedShloka.englishText}</p>
 
           <br />
 
-          <p>{refreshedShloka.current.englishCommentary}</p>
+          <p>{refreshedShloka.englishCommentary}</p>
           <br />
         </div>
       )}
