@@ -113,7 +113,7 @@ export function Shloka({
   if (!refreshedShloka.englishText) {
     return (
       <div className="w-11/12 lg:w-3/4 ">
-        <div className="border p-4 pt-7 m-4 border-gray-500">
+        <div className="border p-4 pt-7 m-4 border-gray-800 text-white">
           <p>Loading...</p>
         </div>
       </div>
@@ -122,7 +122,7 @@ export function Shloka({
   return (
     <div ref={ref} className="w-11/12 lg:w-3/4 ">
       {Shlokadata && (
-        <div className="border p-4 pt-7 m-4 border-gray-500">
+        <div className="border p-4 pt-7 m-4 border-gray-500 text-white">
           <p>{refreshedShloka.englishText}</p>
 
           <br />
