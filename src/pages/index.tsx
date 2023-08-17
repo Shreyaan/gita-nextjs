@@ -39,7 +39,7 @@ const IndexPage = () => {
     <div className="bg-black min-h-screen flex flex-col items-center justify-center">
       <h1 className="text-white text-4xl mb-16">Gita SuperSite Revamped</h1>
       {data.map((item, index) => (
-        <Shloka key={ index} Shlokadata={item} dataArr={data} />
+        <Shloka key={ index} Shlokadata={item} dataArr={data} setData={setData} />
       ))}
     </div>
   );
