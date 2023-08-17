@@ -14,9 +14,6 @@ export function Shloka({
   setData: React.Dispatch<React.SetStateAction<Data[]>>;
 }) {
   const [refreshedShloka, setRefreshedShloka] = useState<Data>({} as Data)
-  useEffectOnce(() => {
-    setRefreshedShloka(Shlokadata)
-  })
   const ref = useRef<HTMLDivElement | null>(null);
   const ran = useRef(false);
   const entry = useIntersectionObserver(ref, {});
@@ -54,7 +51,15 @@ export function Shloka({
               Shlokadata.chapterNumber,
               Shlokadata.shlokaNumber
             );
-           setRefreshedShloka(ref as unknown as Data)
+            let data:Data ={
+              chapterNumber: Shlokadata.chapterNumber,
+              shlokaNumber: Shlokadata.shlokaNumber,
+              englishCommentary :res.englishCommentary,
+              englishText: res.englishText,
+              hindiText: res.hindiText
+
+            }
+           setRefreshedShloka(data)
             console.log(res);
           } catch (e) {
             console.log(e);
