@@ -2,6 +2,9 @@ import axios from "axios";
 import { Data } from "..";
 
 export async function fetchData(chapterNumber: string|number, index: string|number): Promise<Data> {
+  if(chapterNumber===0){
+    return ({} as Data)
+  }
   try {
     const response = await axios.get(
       `/api/getData?chapterNumber=${chapterNumber}&index=${index}`

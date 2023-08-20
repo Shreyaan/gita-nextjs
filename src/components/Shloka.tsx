@@ -10,8 +10,8 @@ export function Shloka({
   setData,
 }: {
   Shlokadata: Data;
-  dataArr: Data[];
-  setData: React.Dispatch<React.SetStateAction<Data[]>>;
+  dataArr: number[];
+  setData: React.Dispatch<React.SetStateAction<number[]>>;
 }) {
   const [refreshedShloka, setRefreshedShloka] = useState<Data>({} as Data);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -19,7 +19,7 @@ export function Shloka({
   const entry = useIntersectionObserver(ref, {});
   const isVisible = !!entry?.isIntersecting;
   const [retryDone, setRetryDone] = useState(false);
-
+  const retryCount = useRef(0);
   const [wasVisible, setWasVisible] = useState(false);
 
   const handleVisibilityChange = (isVisible: boolean) => {
@@ -31,12 +31,10 @@ export function Shloka({
   handleVisibilityChange(isVisible);
 
   useEffect(() => {
-    let retryCount = 0;
-
     const fetchDataWithRetry = async () => {
-      if (retryCount < 2) {
+      if (retryCount.current < 2) {
         if (!data.englishText && !data.englishCommentary) {
-          if (retryCount > 1) {
+          if (retryCount.current > 1) {
             //sleep for 500ms
             await new Promise((r) => setTimeout(r, 1000));
           }
@@ -70,7 +68,7 @@ export function Shloka({
           } catch (e) {
             console.log(e);
           } finally {
-            retryCount++;
+            retryCount.current++;
             setTimeout(fetchDataWithRetry, 1000); // Retry after a delay of 500ms
           }
         }
@@ -88,38 +86,18 @@ export function Shloka({
     data.englishCommentary,
     data.englishText,
     refreshedShloka,
+    retryCount,
   ]);
 
   useEffect(() => {
     if (wasVisible && !isVisible && !ran.current) {
-      let nextChapter = Shlokadata.chapterNumber;
-      let nextIndex = Shlokadata.shlokaNumber + 6;
-
-      if (nextIndex > 30) {
-        nextChapter = Shlokadata.chapterNumber + 1;
-        nextIndex = 0;
-      }
-
-      if (nextChapter <= 18) {
-        let data: Data = {
-          chapterNumber: nextChapter,
-          shlokaNumber: nextIndex,
-        } as Data;
-        setData((prev: any) => {
-          return [...prev, data];
-        });
-      }
-
-      ran.current = true;
+      setData((prev) => [...prev, prev[prev.length - 1] + 1]);
     }
-  }, [
-    isVisible,
-    wasVisible,
-    Shlokadata.chapterNumber,
-    Shlokadata.shlokaNumber,
-    dataArr,
-    setData,
-  ]);
+  }, [isVisible, wasVisible, setData]);
+
+  if (data.chapterNumber == 0) {
+    return;
+  }
 
   if (!refreshedShloka.englishText) {
     return (
