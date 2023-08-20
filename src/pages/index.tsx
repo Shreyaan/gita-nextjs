@@ -46,13 +46,13 @@ const IndexPage = () => {
     }
   });
 
-  useEffect(() => {
-    const dataobj: Data = {
-      chapterNumber: getCorrectShlokaNumber(globalShlokaNumber)[0],
-      shlokaNumber: getCorrectShlokaNumber(globalShlokaNumber)[1],
-    };
-    setData([...data, data]);
-  }, [data, globalShlokaNumber]);
+  // useEffect(() => {
+  //   const dataobj: Data = {
+  //     chapterNumber: getCorrectShlokaNumber(globalShlokaNumber)[0],
+  //     shlokaNumber: getCorrectShlokaNumber(globalShlokaNumber)[1],
+  //   };
+  //   setData([...data, data]);
+  // }, [data, globalShlokaNumber]);
 
   return (
     <div className="bg-black min-h-screen flex flex-col items-center justify-center">
