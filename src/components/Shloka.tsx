@@ -18,6 +18,7 @@ export function Shloka({
   const ran = useRef(false);
   const entry = useIntersectionObserver(ref, {});
   const isVisible = !!entry?.isIntersecting;
+  const [retryDone, setRetryDone] = useState(false);
 
   const [wasVisible, setWasVisible] = useState(false);
 
@@ -73,6 +74,9 @@ export function Shloka({
             setTimeout(fetchDataWithRetry, 1000); // Retry after a delay of 500ms
           }
         }
+      } else {
+        console.log("Failed to fetch data");
+        setRetryDone(true);
       }
     };
 
@@ -123,26 +127,28 @@ export function Shloka({
         <div className="border p-4 pt-7 m-4 border-gray-800 text-white">
           <p>
             Loading...
-            <button
-              className="ml-4 bg-gray-800 text-white px-2 py-1 rounded"
-              onClick={() => {
-                fetchData(
-                  Shlokadata.chapterNumber,
-                  Shlokadata.shlokaNumber
-                ).then((res) => {
-                  let data: Data = {
-                    chapterNumber: Shlokadata.chapterNumber,
-                    shlokaNumber: Shlokadata.shlokaNumber,
-                    englishCommentary: res.englishCommentary,
-                    englishText: res.englishText,
-                    hindiText: res.hindiText,
-                  };
-                  setRefreshedShloka(data);
-                });
-              }}
-            >
-              Reload
-            </button>
+            {retryDone && (
+              <button
+                className="ml-4 bg-gray-800 text-white px-2 py-1 rounded"
+                onClick={() => {
+                  fetchData(
+                    Shlokadata.chapterNumber,
+                    Shlokadata.shlokaNumber
+                  ).then((res) => {
+                    let data: Data = {
+                      chapterNumber: Shlokadata.chapterNumber,
+                      shlokaNumber: Shlokadata.shlokaNumber,
+                      englishCommentary: res.englishCommentary,
+                      englishText: res.englishText,
+                      hindiText: res.hindiText,
+                    };
+                    setRefreshedShloka(data);
+                  });
+                }}
+              >
+                Reload
+              </button>
+            )}
           </p>
         </div>
       </div>
