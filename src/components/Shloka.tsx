@@ -22,31 +22,34 @@ export function Shloka({
 
   let data = refreshedShloka;
 
-  useEffect(() => {
+  useEffectOnce(() => {
     const fetchDataWithRetry = async () => {
-      if (retryCount.current < 2) {
+      if (retryCount.current < 10) {
+        if (retryCount.current > 1) {
+          await new Promise((r) => setTimeout(r, 500));
+        }
         if (!data.englishText && !data.englishCommentary) {
-          if (retryCount.current > 1) {
-            //sleep for 500ms
-            await new Promise((r) => setTimeout(r, 1000));
-          }
-
           try {
-            const res = await fetchData(
+            const res: Data | {} = await fetchData(
               ShlokaMetadata.chapterNumber,
               ShlokaMetadata.shlokaNumber
             );
-            let data: Data = {
-              englishCommentary: res.englishCommentary,
-              englishText: res.englishText,
-              hindiText: res.hindiText,
-            };
-            setRefreshedShloka(data);
+
+            if ("englishCommentary" in res) {
+              let data: Data = {
+                englishCommentary: res.englishCommentary,
+                englishText: res.englishText,
+                hindiText: res.hindiText,
+              };
+              setRefreshedShloka(data);
+            } else {
+              throw new Error("Error in fetching data");
+            }
           } catch (e) {
-            console.log(e);
-          } finally {
             retryCount.current++;
-            setTimeout(fetchDataWithRetry, 1000); // Retry after a delay of 500ms
+            setTimeout(fetchDataWithRetry, 1000); // Retry after a delay of 1s
+          } finally {
+            setRetryDone(true);
           }
         }
       } else {
@@ -55,14 +58,7 @@ export function Shloka({
     };
 
     fetchDataWithRetry();
-  }, [
-    ShlokaMetadata.chapterNumber,
-    ShlokaMetadata.shlokaNumber,
-    data.englishCommentary,
-    data.englishText,
-    refreshedShloka,
-    retryCount,
-  ]);
+  });
 
   if (ShlokaMetadata.chapterNumber == 0) {
     return;
